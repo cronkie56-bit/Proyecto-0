@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Notas</title>
+<style>
+body {
+    margin: 0;
+    background: #0b0b0b;
+    color: white;
+    font-family: Arial;
+    overflow: hidden;
+}
+
+/* ☰ ICONO */
+.menu-icon {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #c77dff;
+    text-shadow: 0 0 10px #c77dff;
+    z-index: 50;
+    transition: 0.3s;
+}
+
+.menu-icon:hover { 
+    transform: scale(1.1); 
+    text-shadow: 0 0 20px #c77dff; 
+}
+
+/* PANEL ANIMADO */
+.side-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100%;
+    background: #111;
+    box-shadow: 0 0 25px #c77dff;
+    border-radius: 0 15px 15px 0;
+    padding: 20px;
+    z-index: 40;
+
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+
+    transition: transform 0.4s ease, opacity 0.3s ease;
+}
+
+.side-panel.active { 
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* BOTONES PANEL (MEJORADOS) */
+.panel-btn {
+    display: block;
+    width: 100%;
+    margin: 15px 0;
+    padding: 12px;
+    background: #000; /* negro */
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 20px; /* MÁS REDONDEADO */
+    box-shadow: 0 0 10px #c77dff;
+    transition: 0.3s;
+}
+
+.panel-btn:hover { 
+    background: #1a1a1a; 
+    box-shadow: 0 0 20px #c77dff; 
+}
+
+/* CERRAR SESIÓN (RESPETADO) */
+#logout {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 8px 15px;
+    background: #111;
+    border: 1px solid #555;
+    color: white;
+    cursor: pointer;
+    border-radius: 0; /* cuadrado */
+    z-index: 60;
+    box-shadow: 0 0 10px red;
+}
+
+#logout:hover { 
+    background: red; 
+    box-shadow: 0 0 20px red; 
+}
+
+/* INTERFAZ */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 80px;
+}
+
+textarea {
+    width: 90%;
+    height: 100px;
+    background: #111;
+    border-radius: 12px;
+    border: 1px solid #444;
+    color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px #8000ff;
+}
+
+.container button {
+    width: 90%;
+    background: #000;
+    border-radius: 20px;
+    border: none;
+    color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px #c77dff;
+}
+
+#listaNotas .note {
+    background: #111;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #444;
+    box-shadow: 0 0 8px #c77dff;
+    position: relative;
+}
+
+#listaNotas .note button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #222;
+    border: none;
+    color: #ff003c;
+    padding: 2px 6px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#listaNotas .note button:hover { 
+    background: #ff003c; 
+    color: black; 
+}
+</style>
+</head>
+<body>
+
+<!-- ICONO PANEL -->
+<div class="menu-icon" id="menuIcon">☰</div>
+
+<!-- PANEL -->
+<div class="side-panel" id="panel">
+    <button class="panel-btn" onclick="window.location.href='notas.html'">📝 Notas</button>
+    <button class="panel-btn" onclick="window.location.href='mensajes.html'">💬 Mensajes</button>
+</div>
+
+<!-- CERRAR SESIÓN -->
+<button id="logout" onclick="logout()">Cerrar sesión</button>
+
+<div class="container">
+    <h2>Notas de <span id="usuario"></span></h2>
+    <textarea id="notaInput" placeholder="Escribe una nota..."></textarea>
+    <button onclick="agregarNota()">Agregar Nota</button>
+    <div id="listaNotas"></div>
+</div>
+
+<script>
+const usuario = localStorage.getItem("usuario");
+if(!usuario){ window.location.href="index.html"; }
+document.getElementById("usuario").textContent = usuario;
+
+// PANEL (NUEVO)
+const panel = document.getElementById("panel");
+const menuIcon = document.getElementById("menuIcon");
+
+menuIcon.onclick = () => {
+    panel.classList.add("active");
+    menuIcon.style.display = "none";
+};
+
+document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("active") && !panel.contains(e.target) && e.target !== menuIcon){
+        panel.classList.remove("active");
+        menuIcon.style.display = "block";
+    }
+});
+
+// CERRAR SESIÓN
+function logout(){
+    localStorage.removeItem("usuario");
+    window.location.href="index.html";
+}
+
+// NOTAS
+const notasKey = "notas_" + usuario;
+
+function cargarNotas(){
+    const notas = JSON.parse(localStorage.getItem(notasKey)) || [];
+    const cont = document.getElementById("listaNotas");
+    cont.innerHTML = "";
+    notas.forEach((n,i)=>{
+        cont.innerHTML += `<div class="note">${n}<button onclick="borrarNota(${i})">X</button></div>`;
+    });
+}
+
+function agregarNota(){
+    const input = document.getElementById("notaInput");
+    const notas = JSON.parse(localStorage.getItem(notasKey)) || [];
+    if(!input.value) return;
+    notas.push(input.value);
+    localStorage.setItem(notasKey, JSON.stringify(notas));
+    input.value="";
+    cargarNotas();
+}
+
+function borrarNota(i){
+    const notas = JSON.parse(localStorage.getItem(notasKey)) || [];
+    notas.splice(i,1);
+    localStorage.setItem(notasKey, JSON.stringify(notas));
+    cargarNotas();
+}
+
+cargarNotas();
+</script>
+
+</body>
+</html>

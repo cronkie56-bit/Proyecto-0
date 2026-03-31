@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
+<title>Acceso</title>
 
 <style>
 body {
@@ -13,24 +13,63 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    opacity: 1;
-    transition: opacity 0.6s ease;
+    overflow: hidden;
 }
 
-body.fade-out {
-    opacity: 0;
+/* TÍTULO GLITCH */
+.titulo {
+    position: relative;
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #c77dff;
+    text-shadow: 0 0 8px #c77dff;
+    animation: glitch 1.5s infinite;
+    z-index: 2;
 }
 
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-2px, -2px); }
+    80% { transform: translate(2px, 2px); }
+    100% { transform: translate(0); }
+}
+
+/* CAJA */
 .login-box {
+    position: relative;
     background: #111;
     padding: 30px;
-    border-radius: 10px;
+    border-radius: 12px;
     width: 300px;
     text-align: center;
-    box-shadow: 0 0 15px rgba(255,255,255,0.1);
+    overflow: hidden;
 }
 
+/* BORDE REACTIVO */
+.login-box::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 12px;
+    background: radial-gradient(circle at var(--x,50%) var(--y,50%), #c77dff, transparent 40%);
+    pointer-events: none;
+}
+
+.login-box::after {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    background: #111;
+    border-radius: 10px;
+    pointer-events: none;
+}
+
+/* INPUTS */
 input {
+    position: relative;
+    z-index: 2;
     width: 90%;
     padding: 10px;
     margin: 10px 0;
@@ -39,7 +78,15 @@ input {
     color: white;
 }
 
+input:focus {
+    border: 1px solid #c77dff;
+    box-shadow: 0 0 10px #c77dff;
+}
+
+/* BOTÓN */
 button {
+    position: relative;
+    z-index: 2;
     width: 100%;
     padding: 10px;
     background: #444;
@@ -49,50 +96,127 @@ button {
 }
 
 button:hover {
-    background: #666;
+    background: #6a0dad;
 }
 
-.error {
-    color: red;
+/* OVERLAY */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, #000, #050005);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 35px;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.5s;
+    z-index: 10;
+}
+
+/* TEXTO */
+.overlay span {
+    animation: glitchText 0.6s infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes glitchText {
+    0% { transform: translate(0); }
+    20% { transform: translate(-3px, 2px); }
+    40% { transform: translate(3px, -2px); }
+    60% { transform: translate(-2px, -3px); }
+    80% { transform: translate(2px, 3px); }
+    100% { transform: translate(0); }
+}
+
+/* SPINNER */
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 4px solid transparent;
+    border-top: 4px solid #c77dff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 10px #c77dff;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.overlay.show {
+    opacity: 1;
 }
 </style>
 
 </head>
 <body>
 
-<!-- Música -->
 <audio id="musica" loop>
     <source src="zelda.mp3" type="audio/mpeg">
 </audio>
 
 <div class="login-box">
-    <h2>Iniciar Sesión</h2>
+    <div class="titulo">ACCESO REQUERIDO</div>
+
     <input type="text" id="usuario" placeholder="Usuario">
     <input type="password" id="password" placeholder="Contraseña">
     <button onclick="login()">Entrar</button>
-    <p class="error" id="error"></p>
 </div>
 
+<!-- OVERLAY -->
+<div id="overlay" class="overlay"></div>
+
 <script>
-// Activar música al hacer clic
+// música
 window.addEventListener('click', () => {
     document.getElementById("musica").play();
 });
 
-function login() {
-    const user = document.getElementById("usuario").value;
-    const pass = document.getElementById("password").value;
+// borde reactivo
+const box = document.querySelector(".login-box");
+box.addEventListener("mousemove", (e) => {
+    const rect = box.getBoundingClientRect();
+    const x = ((e.clientX - rect.left)/rect.width)*100;
+    const y = ((e.clientY - rect.top)/rect.height)*100;
+    box.style.setProperty("--x", x+"%");
+    box.style.setProperty("--y", y+"%");
+});
 
-    if (user === "admin" && pass === "1234") {
-        localStorage.setItem("usuario", user);
+// LOGIN
+function login(){
+    const user = usuario.value;
+    const pass = password.value;
 
-        document.body.classList.add("fade-out");
+    const usuarios = [
+        {user:"ADMIN",pass:"2011"},
+        {user:"str4wberry",pass:"041617"},
+        {user:"guest",pass:"0000"},
+        {user:"user1",pass:"2222"},
+        {user:"user2",pass:"3333"},
+        {user:"user3",pass:"4444"}
+    ];
 
-        setTimeout(() => {
-            window.location.href = "bienvenido.html";
-        }, 600);
-    } else {
-        document.getElementById("error").textContent = "Datos incorrectos";
+    const valido = usuarios.find(u=>u.user===user && u.pass===pass);
+    const overlay = document.getElementById("overlay");
+
+    if(valido){
+        overlay.innerHTML = "<span style='color:#00ff9f;text-shadow:0 0 15px #00ff9f'>ACCESO CONCEDIDO</span><div class='loader'></div>";
+        overlay.classList.add("show");
+
+        setTimeout(()=>{
+            localStorage.setItem("usuario",user);
+            window.location.href="bienvenido.html";
+        },2000);
+    }else{
+        overlay.innerHTML = "<span style='color:#ff003c;text-shadow:0 0 15px #ff003c'>ACCESO DENEGADO</span>";
+        overlay.classList.add("show");
+
+        setTimeout(()=>{
+            overlay.classList.remove("show");
+        },1500);
     }
 }
 </script>

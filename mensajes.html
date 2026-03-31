@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mensajes</title>
+
+<style>
+body {
+    margin: 0;
+    background: #0b0b0b;
+    color: white;
+    font-family: Arial;
+}
+
+/* ☰ ICONO */
+.menu-icon {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #c77dff;
+    text-shadow: 0 0 10px #c77dff;
+    z-index: 50;
+}
+
+/* PANEL CON ANIMACIÓN REAL */
+.side-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100%;
+    background: #111;
+    box-shadow: 0 0 25px #c77dff;
+    border-radius: 0 0 15px 0;
+    padding: 20px;
+    z-index: 40;
+
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+
+    transition: transform 0.4s ease, opacity 0.3s ease;
+}
+
+.side-panel.active {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* BOTONES PANEL */
+.panel-btn {
+    display: block;
+    width: 100%;
+    margin: 15px 0;
+    padding: 12px;
+    background: #000;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #c77dff;
+}
+
+.panel-btn:hover {
+    background: #1a1a1a;
+    box-shadow: 0 0 20px #c77dff;
+}
+
+/* BOTÓN CERRAR SESIÓN */
+#logout {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 8px 15px;
+    background: #111;
+    border: 1px solid #555;
+    color: white;
+    cursor: pointer;
+    border-radius: 0;
+    box-shadow: 0 0 10px red;
+}
+
+#logout:hover {
+    background: red;
+    box-shadow: 0 0 20px red;
+}
+
+/* CONTENIDO */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 80px;
+}
+
+input, textarea, button:not(#logout) {
+    width: 90%;
+    background: #000;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px #c77dff;
+}
+
+.msg {
+    background: #111;
+    border-radius: 10px;
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #444;
+    box-shadow: 0 0 8px #c77dff;
+    width: 90%;
+}
+
+.msg-time {
+    font-size: 0.7em;
+    color: #888;
+    float: right;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ☰ -->
+<div class="menu-icon" id="menuIcon">☰</div>
+
+<!-- PANEL -->
+<div class="side-panel" id="panel">
+    <button class="panel-btn" onclick="window.location.href='bienvenido.html'">🏠 Inicio</button>
+    <button class="panel-btn" onclick="window.location.href='notas.html'">📝 Notas</button>
+    <button class="panel-btn" onclick="window.location.href='mensajes.html'">💬 Mensajes</button>
+</div>
+
+<!-- LOGOUT -->
+<button id="logout">Cerrar sesión</button>
+
+<div class="container">
+    <h2>Mensajes de <span id="usuario"></span></h2>
+
+    <input id="destino" placeholder="Usuario destino">
+    <textarea id="mensajeInput" placeholder="Mensaje..."></textarea>
+    <button onclick="enviarMensaje()">Enviar</button>
+
+    <div id="recibidos"></div>
+</div>
+
+<script>
+// SESIÓN
+const usuario = localStorage.getItem("usuario");
+if(!usuario){ window.location.href="index.html"; }
+document.getElementById("usuario").textContent = usuario;
+
+// PANEL
+const panel = document.getElementById("panel");
+const menuIcon = document.getElementById("menuIcon");
+
+menuIcon.onclick = () => {
+    panel.classList.add("active");
+    menuIcon.style.display = "none";
+};
+
+document.addEventListener("click", (e)=>{
+    if(panel.classList.contains("active") && !panel.contains(e.target) && e.target !== menuIcon){
+        panel.classList.remove("active");
+        menuIcon.style.display = "block";
+    }
+});
+
+// LOGOUT
+document.getElementById("logout").onclick = ()=>{
+    localStorage.removeItem("usuario");
+    window.location.href="index.html";
+};
+
+// MENSAJES
+const mensajesKey = "mensajes_" + usuario;
+
+function enviarMensaje(){
+    const destino = destinoInput.value.trim();
+    const texto = mensajeInput.value.trim();
+    if(!destino || !texto) return;
+
+    const hora = new Date().toLocaleTimeString();
+    const clave = "mensajes_" + destino;
+
+    const mensajes = JSON.parse(localStorage.getItem(clave)) || [];
+    mensajes.push({de: usuario, texto, hora});
+    localStorage.setItem(clave, JSON.stringify(mensajes));
+
+    mensajeInput.value="";
+    cargarMensajes();
+}
+
+function cargarMensajes(){
+    const datos = JSON.parse(localStorage.getItem(mensajesKey)) || [];
+    const cont = document.getElementById("recibidos");
+    cont.innerHTML="";
+
+    datos.forEach(m=>{
+        cont.innerHTML += `
+        <div class="msg">
+            <b>${m.de}</b>: ${m.texto}
+            <div class="msg-time">${m.hora}</div>
+        </div>`;
+    });
+}
+
+setInterval(cargarMensajes,2000);
+cargarMensajes();
+</script>
+
+</body>
+</html>
