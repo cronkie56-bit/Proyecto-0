@@ -16,7 +16,7 @@ body {
     overflow: hidden;
 }
 
-/* TÍTULO GLITCH */
+/* TÍTULO */
 .titulo {
     position: relative;
     font-size: 22px;
@@ -47,7 +47,7 @@ body {
     overflow: hidden;
 }
 
-/* BORDE REACTIVO */
+/* BORDE */
 .login-box::before {
     content: "";
     position: absolute;
@@ -76,11 +76,13 @@ input {
     background: #222;
     border: 1px solid #555;
     color: white;
+    border-radius: 10px;
 }
 
 input:focus {
     border: 1px solid #c77dff;
     box-shadow: 0 0 10px #c77dff;
+    outline: none;
 }
 
 /* BOTÓN */
@@ -89,14 +91,18 @@ button {
     z-index: 2;
     width: 100%;
     padding: 10px;
-    background: #444;
+    background: #000;
     border: none;
     color: white;
     cursor: pointer;
+    border-radius: 20px;
+    box-shadow: 0 0 10px #c77dff;
+    transition: .3s;
 }
 
 button:hover {
-    background: #6a0dad;
+    background: #1a1a1a;
+    box-shadow: 0 0 20px #c77dff;
 }
 
 /* OVERLAY */
@@ -159,63 +165,133 @@ button:hover {
 </audio>
 
 <div class="login-box">
+
     <div class="titulo">ACCESO REQUERIDO</div>
 
     <input type="text" id="usuario" placeholder="Usuario">
+
     <input type="password" id="password" placeholder="Contraseña">
+
     <button onclick="login()">Entrar</button>
+
 </div>
 
 <!-- OVERLAY -->
 <div id="overlay" class="overlay"></div>
 
 <script>
-// música
+// MÚSICA
 window.addEventListener('click', () => {
     document.getElementById("musica").play();
 });
 
-// borde reactivo
+// BORDE REACTIVO
 const box = document.querySelector(".login-box");
+
 box.addEventListener("mousemove", (e) => {
+
     const rect = box.getBoundingClientRect();
+
     const x = ((e.clientX - rect.left)/rect.width)*100;
     const y = ((e.clientY - rect.top)/rect.height)*100;
+
     box.style.setProperty("--x", x+"%");
     box.style.setProperty("--y", y+"%");
 });
 
-// LOGIN
+/* =========================================
+   USUARIOS LOGIN
+========================================= */
+
+const usuarios = [
+    {user:"ADMIN",pass:"2011"},
+    {user:"str4wberry",pass:"041617"},
+    {user:"Rat",pass:"0000"},
+    {user:"Spams",pass:"2222"},
+    {user:"user1",pass:"1111"},
+    {user:"user2",pass:"2222"}
+];
+
+/* =========================================
+   GUARDAR USUARIOS AUTOMÁTICAMENTE
+========================================= */
+
+function actualizarUsuarios(){
+
+    let usuariosGuardados =
+        JSON.parse(localStorage.getItem("usuarios")) || [];
+
+    usuarios.forEach(u=>{
+
+        if(!usuariosGuardados.includes(u.user)){
+
+            usuariosGuardados.push(u.user);
+
+        }
+
+    });
+
+    localStorage.setItem(
+        "usuarios",
+        JSON.stringify(usuariosGuardados)
+    );
+}
+
+actualizarUsuarios();
+
+/* =========================================
+   LOGIN
+========================================= */
+
 function login(){
+
     const user = usuario.value;
     const pass = password.value;
 
-    const usuarios = [
-        {user:"ADMIN",pass:"2011"},
-        {user:"str4wberry",pass:"041617"},
-        {user:"Rat",pass:"0000"},
-        {user:"Spams",pass:"2222"},
-        {user:"user1",pass:"1111"},
-        {user:"user2",pass:"2222"}
-    ];
+    const valido =
+        usuarios.find(
+            u => u.user === user && u.pass === pass
+        );
 
-    const valido = usuarios.find(u=>u.user===user && u.pass===pass);
-    const overlay = document.getElementById("overlay");
+    const overlay =
+        document.getElementById("overlay");
 
     if(valido){
-        overlay.innerHTML = "<span style='color:#00ff9f;text-shadow:0 0 15px #00ff9f'>ACCESO CONCEDIDO</span><div class='loader'></div>";
+
+        overlay.innerHTML =
+        `
+        <span style='color:#00ff9f;text-shadow:0 0 15px #00ff9f'>
+        ACCESO CONCEDIDO
+        </span>
+
+        <div class='loader'></div>
+        `;
+
         overlay.classList.add("show");
 
         setTimeout(()=>{
-            localStorage.setItem("usuario",user);
-            window.location.href="bienvenido.html";
+
+            localStorage.setItem("usuario", user);
+
+            window.location.href = "bienvenido.html";
+
         },2000);
+
     }else{
-        overlay.innerHTML = "<span style='color:#ff003c;text-shadow:0 0 15px #ff003c'>ACCESO DENEGADO</span>";
+
+        overlay.innerHTML =
+        `
+        <span style='color:#ff003c;text-shadow:0 0 15px #ff003c'>
+        ACCESO DENEGADO
+        </span>
+        `;
+
         overlay.classList.add("show");
 
         setTimeout(()=>{
+
             overlay.classList.remove("show");
+
         },1500);
     }
 }
