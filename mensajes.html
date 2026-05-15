@@ -5,127 +5,278 @@
 <title>Mensajes</title>
 
 <style>
-body {
-    margin: 0;
-    background: #0b0b0b;
-    color: white;
-    font-family: Arial;
+body{
+    margin:0;
+    background:#0b0b0b;
+    color:white;
+    font-family:Arial;
+    overflow:hidden;
 }
 
-/* ☰ ICONO */
-.menu-icon {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 28px;
-    cursor: pointer;
-    color: #c77dff;
-    text-shadow: 0 0 10px #c77dff;
-    z-index: 50;
+/* ☰ */
+.menu-icon{
+    position:fixed;
+    top:20px;
+    left:20px;
+    font-size:28px;
+    cursor:pointer;
+    color:#c77dff;
+    text-shadow:0 0 10px #c77dff;
+    z-index:50;
 }
 
-/* PANEL CON ANIMACIÓN REAL */
-.side-panel {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 260px;
-    height: 100%;
-    background: #111;
-    box-shadow: 0 0 25px #c77dff;
-    border-radius: 0 0 15px 0;
-    padding: 20px;
-    z-index: 40;
+/* PANEL */
+.side-panel{
+    position:fixed;
+    top:0;
+    left:0;
+    width:260px;
+    height:100%;
+    background:#111;
+    box-shadow:0 0 25px #c77dff;
+    border-radius:0 0 15px 0;
+    padding:20px;
+    z-index:40;
 
-    transform: translateX(-100%);
-    opacity: 0;
-    pointer-events: none;
+    transform:translateX(-100%);
+    opacity:0;
+    pointer-events:none;
 
-    transition: transform 0.4s ease, opacity 0.3s ease;
+    transition:transform .4s ease, opacity .3s ease;
 }
 
-.side-panel.active {
-    transform: translateX(0);
-    opacity: 1;
-    pointer-events: auto;
+.side-panel.active{
+    transform:translateX(0);
+    opacity:1;
+    pointer-events:auto;
 }
 
 /* BOTONES PANEL */
-.panel-btn {
-    display: block;
-    width: 100%;
-    margin: 15px 0;
-    padding: 12px;
-    background: #000;
-    border: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 10px;
-    box-shadow: 0 0 10px #c77dff;
+.panel-btn{
+    display:block;
+    width:100%;
+    margin:15px 0;
+    padding:12px;
+    background:#000;
+    border:none;
+    color:white;
+    cursor:pointer;
+    border-radius:20px;
+    box-shadow:0 0 10px #c77dff;
+    transition:.3s;
 }
 
-.panel-btn:hover {
-    background: #1a1a1a;
-    box-shadow: 0 0 20px #c77dff;
+.panel-btn:hover{
+    background:#1a1a1a;
+    box-shadow:0 0 20px #c77dff;
 }
 
-/* BOTÓN CERRAR SESIÓN */
-#logout {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 8px 15px;
-    background: #111;
-    border: 1px solid #555;
-    color: white;
-    cursor: pointer;
-    border-radius: 0;
-    box-shadow: 0 0 10px red;
+/* LOGOUT */
+#logout{
+    position:fixed;
+    top:20px;
+    right:20px;
+    padding:8px 15px;
+    background:#111;
+    border:1px solid #555;
+    color:white;
+    cursor:pointer;
+    border-radius:0;
+    box-shadow:0 0 10px red;
 }
 
-#logout:hover {
-    background: red;
-    box-shadow: 0 0 20px red;
+#logout:hover{
+    background:red;
+    box-shadow:0 0 20px red;
 }
 
 /* CONTENIDO */
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 80px;
+.container{
+    display:flex;
+    height:100vh;
 }
 
-input, textarea, button:not(#logout) {
-    width: 90%;
-    background: #000;
-    border-radius: 10px;
-    border: none;
-    color: white;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 0 10px #c77dff;
+/* LISTA CHATS */
+.sidebar-chat{
+    width:280px;
+    background:#111;
+    padding:80px 15px 15px;
+    overflow-y:auto;
+    border-right:1px solid #222;
 }
 
-.msg {
-    background: #111;
-    border-radius: 10px;
-    padding: 8px;
-    margin: 8px 0;
-    border: 1px solid #444;
-    box-shadow: 0 0 8px #c77dff;
-    width: 90%;
+.chat-user{
+    background:#000;
+    padding:15px;
+    border-radius:18px;
+    margin-bottom:12px;
+    cursor:pointer;
+    box-shadow:0 0 10px #c77dff;
+    transition:.3s;
 }
 
-.msg-time {
-    font-size: 0.7em;
-    color: #888;
-    float: right;
+.chat-user:hover{
+    transform:scale(1.02);
+    box-shadow:0 0 20px #c77dff;
+}
+
+.chat-user.active{
+    background:#1a1a1a;
+    box-shadow:0 0 25px #c77dff;
+}
+
+/* CHAT */
+.chat-area{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    padding:80px 20px 20px;
+}
+
+.chat-top{
+    font-size:22px;
+    margin-bottom:15px;
+    color:#c77dff;
+    text-shadow:0 0 10px #c77dff;
+}
+
+/* MENSAJES */
+#recibidos{
+    flex:1;
+    overflow-y:auto;
+    padding-right:10px;
+}
+
+/* MENSAJES */
+.msg.selected{
+    outline:2px solid #c77dff;
+    box-shadow:0 0 20px #c77dff;
+}
+
+.msg-actions{
+    display:flex;
+    gap:8px;
+    margin-top:8px;
+}
+
+.msg-actions button{
+    background:#000;
+    border:none;
+    color:white;
+    padding:5px 10px;
+    border-radius:10px;
+    cursor:pointer;
+    box-shadow:0 0 10px #c77dff;
+}
+
+.msg-actions button:hover{
+    box-shadow:0 0 20px #c77dff;
+}
+
+.msg{
+    background:#111;
+    border-radius:15px;
+    padding:12px;
+    margin:10px 0;
+    box-shadow:0 0 10px #c77dff;
+    width:fit-content;
+    max-width:70%;
+    word-wrap:break-word;
+}
+
+.mine{
+    margin-left:auto;
+    background:#190028;
+}
+
+.msg-time{
+    font-size:.7em;
+    color:#888;
+    margin-top:5px;
+    text-align:right;
+}
+
+/* IMÁGENES */
+.image-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.9);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.image-modal img{
+    max-width:90%;
+    max-height:90%;
+    border-radius:15px;
+    box-shadow:0 0 30px #c77dff;
+}
+
+.msg img{
+    max-width:250px;
+    cursor:pointer;
+    transition:.3s;
+    border-radius:10px;
+    margin-top:10px;
+    box-shadow:0 0 10px #c77dff;
+}
+
+.file-link{
+    display:block;
+    margin-top:10px;
+    color:#c77dff;
+    text-decoration:none;
+}
+
+/* INPUT */
+.send-box{
+    display:flex;
+    gap:10px;
+    margin-top:15px;
+}
+
+textarea{
+    flex:1;
+    resize:none;
+    height:60px;
+    background:#000;
+    border:none;
+    color:white;
+    border-radius:15px;
+    padding:10px;
+    box-shadow:0 0 10px #c77dff;
+}
+
+.send-btn,
+.file-btn{
+    width:120px;
+    background:#000;
+    border:none;
+    color:white;
+    border-radius:20px;
+    cursor:pointer;
+    box-shadow:0 0 10px #c77dff;
+}
+
+.send-btn:hover,
+.file-btn:hover{
+    box-shadow:0 0 20px #c77dff;
+}
+
+#fileInput{
+    display:none;
 }
 </style>
 </head>
 
 <body>
+
+<!-- VISOR IMAGEN -->
+<div class="image-modal" id="imageModal" onclick="cerrarImagen()">
+    <img id="modalImg">
+</div>
 
 <!-- ☰ -->
 <div class="menu-icon" id="menuIcon">☰</div>
@@ -141,22 +292,50 @@ input, textarea, button:not(#logout) {
 <button id="logout">Cerrar sesión</button>
 
 <div class="container">
-    <h2>Mensajes de <span id="usuario"></span></h2>
 
-    <input id="destino" placeholder="Usuario destino">
-    <textarea id="mensajeInput" placeholder="Mensaje..."></textarea>
-    <button onclick="enviarMensaje()">Enviar</button>
+    <!-- USUARIOS -->
+    <div class="sidebar-chat" id="usuariosChat"></div>
 
-    <div id="recibidos"></div>
+    <!-- CHAT -->
+    <div class="chat-area">
+
+        <div class="chat-top">
+            Conversación con <span id="chatNombre">...</span>
+        </div>
+
+        <div id="recibidos"></div>
+
+        <div class="send-box">
+            <textarea id="mensajeInput" placeholder="Escribe un mensaje..."></textarea>
+
+            <input type="file" id="fileInput">
+
+            <button class="file-btn" onclick="document.getElementById('fileInput').click()">
+                📎 Archivo
+            </button>
+
+            <button class="send-btn" onclick="enviarMensaje()">
+                Enviar
+            </button>
+        </div>
+
+    </div>
+
 </div>
 
 <script>
 // SESIÓN
 const usuario = localStorage.getItem("usuario");
-if(!usuario){ window.location.href="index.html"; }
-document.getElementById("usuario").textContent = usuario;
 
-// PANEL
+if(!usuario){
+    window.location.href="index.html";
+}
+
+/* USUARIOS */
+const usuariosRegistrados =
+JSON.parse(localStorage.getItem("usuarios")) || [];
+
+/* PANEL */
 const panel = document.getElementById("panel");
 const menuIcon = document.getElementById("menuIcon");
 
@@ -165,54 +344,310 @@ menuIcon.onclick = () => {
     menuIcon.style.display = "none";
 };
 
-document.addEventListener("click", (e)=>{
-    if(panel.classList.contains("active") && !panel.contains(e.target) && e.target !== menuIcon){
+document.addEventListener("click",(e)=>{
+
+    if(
+        panel.classList.contains("active") &&
+        !panel.contains(e.target) &&
+        e.target !== menuIcon
+    ){
         panel.classList.remove("active");
         menuIcon.style.display = "block";
     }
 });
 
-// LOGOUT
+/* LOGOUT */
 document.getElementById("logout").onclick = ()=>{
+
     localStorage.removeItem("usuario");
+
     window.location.href="index.html";
 };
 
-// MENSAJES
-const mensajesKey = "mensajes_" + usuario;
+/* CHAT */
+let chatActual = null;
+let archivoActual = null;
 
-function enviarMensaje(){
-    const destino = destinoInput.value.trim();
-    const texto = mensajeInput.value.trim();
-    if(!destino || !texto) return;
+/* CARGAR USUARIOS */
+function cargarUsuarios(){
 
-    const hora = new Date().toLocaleTimeString();
-    const clave = "mensajes_" + destino;
+    const cont = document.getElementById("usuariosChat");
 
-    const mensajes = JSON.parse(localStorage.getItem(clave)) || [];
-    mensajes.push({de: usuario, texto, hora});
-    localStorage.setItem(clave, JSON.stringify(mensajes));
+    cont.innerHTML = "";
 
-    mensajeInput.value="";
-    cargarMensajes();
-}
+    usuariosRegistrados.forEach(u=>{
 
-function cargarMensajes(){
-    const datos = JSON.parse(localStorage.getItem(mensajesKey)) || [];
-    const cont = document.getElementById("recibidos");
-    cont.innerHTML="";
+        if(u !== usuario){
 
-    datos.forEach(m=>{
-        cont.innerHTML += `
-        <div class="msg">
-            <b>${m.de}</b>: ${m.texto}
-            <div class="msg-time">${m.hora}</div>
-        </div>`;
+            cont.innerHTML += `
+            <div class="chat-user"
+                 id="chat-${u}"
+                 onclick="abrirChat('${u}')">
+                 👤 ${u}
+            </div>
+            `;
+        }
     });
 }
 
-setInterval(cargarMensajes,2000);
-cargarMensajes();
+/* ABRIR CHAT */
+function abrirChat(user){
+
+    chatActual = user;
+
+    document.getElementById("chatNombre")
+    .textContent = user;
+
+    document.querySelectorAll(".chat-user")
+    .forEach(el=>el.classList.remove("active"));
+
+    document.getElementById("chat-"+user)
+    .classList.add("active");
+
+    cargarMensajes();
+}
+
+/* LEER ARCHIVO */
+document.getElementById("fileInput")
+.addEventListener("change", function(){
+
+    const file = this.files[0];
+
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        archivoActual = {
+            nombre:file.name,
+            tipo:file.type,
+            data:e.target.result
+        };
+    };
+
+    reader.readAsDataURL(file);
+});
+
+/* ENVIAR */
+function enviarMensaje(){
+
+    if(!chatActual) return;
+
+    const texto = mensajeInput.value.trim();
+
+    if(!texto && !archivoActual) return;
+
+    const hora = new Date().toLocaleTimeString();
+
+    const fechaCompleta = new Date().toISOString();
+
+    const mensaje = {
+        de:usuario,
+        para:chatActual,
+        texto,
+        hora,
+        fecha:fechaCompleta,
+        archivo:archivoActual
+    };
+
+    // DESTINO
+    const claveDestino = "mensajes_" + chatActual;
+
+    const mensajesDestino =
+        JSON.parse(localStorage.getItem(claveDestino)) || [];
+
+    mensajesDestino.push(mensaje);
+
+    localStorage.setItem(
+        claveDestino,
+        JSON.stringify(mensajesDestino)
+    );
+
+    // REMITENTE
+    const claveRemitente = "mensajes_" + usuario;
+
+    const mensajesRemitente =
+        JSON.parse(localStorage.getItem(claveRemitente)) || [];
+
+    mensajesRemitente.push(mensaje);
+
+    localStorage.setItem(
+        claveRemitente,
+        JSON.stringify(mensajesRemitente)
+    );
+
+    mensajeInput.value = "";
+
+    document.getElementById("fileInput").value = "";
+
+    archivoActual = null;
+
+    cargarMensajes();
+}
+
+/* CARGAR MENSAJES */
+function verificarExpiracionMensajes(){
+
+    const ahora = new Date();
+
+    usuariosRegistrados.forEach(user=>{
+
+        const clave = "mensajes_" + user;
+
+        let mensajes = JSON.parse(localStorage.getItem(clave)) || [];
+
+        mensajes = mensajes.filter(m=>{
+
+            if(!m.fecha) return true;
+
+            const fechaMensaje = new Date(m.fecha);
+
+            const diferencia = ahora - fechaMensaje;
+
+            const dias = diferencia / (1000 * 60 * 60 * 24);
+
+            // AVISO DESPUÉS DE 11 MESES
+            if(dias >= 335 && dias < 365 && !m.avisoMostrado){
+
+                alert(
+                    `⚠ Un mensaje entre ${m.de} y ${m.para} se eliminará pronto al cumplir 1 año.`
+                );
+
+                m.avisoMostrado = true;
+            }
+
+            // BORRAR DESPUÉS DE 1 AÑO
+            return dias < 365;
+        });
+
+        localStorage.setItem(clave, JSON.stringify(mensajes));
+    });
+}
+
+function cargarMensajes(){ 
+
+    if(!chatActual) return;
+
+    const datos =
+        JSON.parse(localStorage.getItem("mensajes_" + usuario)) || [];
+
+    const cont = document.getElementById("recibidos");
+
+    cont.innerHTML = "";
+
+    datos.forEach(m=>{
+
+        if(
+            (m.de === usuario && m.para === chatActual) ||
+            (m.de === chatActual && m.para === usuario)
+        ){
+
+            let contenidoArchivo = "";
+
+            if(m.archivo){
+
+                if(m.archivo.tipo.startsWith("image/")){
+
+                    contenidoArchivo = `
+                    <img src="${m.archivo.data}" onclick="abrirImagen('${m.archivo.data}')">
+                    `;
+
+                }else{
+
+                    contenidoArchivo = `
+                    <a class="file-link"
+                       href="${m.archivo.data}"
+                       download="${m.archivo.nombre}">
+                       📎 ${m.archivo.nombre}
+                    </a>
+                    `;
+                }
+            }
+
+            cont.innerHTML += `
+            <div class="msg ${m.de===usuario ? 'mine' : ''}"
+                 onclick="seleccionarMensaje(this)">
+                <b>${m.de}</b><br>
+                ${m.texto || ''}
+                ${contenidoArchivo}
+                <div class="msg-actions">
+                    <button onclick="copiarMensaje(event, \`${m.texto || ''}\`)">
+                        📋 Copiar
+                    </button>
+
+                    <button onclick="borrarMensaje(event, '${m.fecha}')">
+                        🗑 Borrar
+                    </button>
+                </div>
+
+                <div class="msg-time">${m.hora}</div>
+            </div>
+            `;
+        }
+    });
+
+    cont.scrollTop = cont.scrollHeight;
+}
+
+/* ACTUALIZAR */
+setInterval(()=>{
+    verificarExpiracionMensajes();
+    cargarMensajes();
+},1000);
+
+verificarExpiracionMensajes();
+cargarUsuarios();
+
+/* VISOR */
+function abrirImagen(src){
+
+    document.getElementById("imageModal")
+    .style.display = "flex";
+
+    document.getElementById("modalImg")
+    .src = src;
+}
+
+function seleccionarMensaje(el){
+
+    document.querySelectorAll('.msg')
+    .forEach(m=>m.classList.remove('selected'));
+
+    el.classList.add('selected');
+}
+
+function copiarMensaje(event,texto){
+
+    event.stopPropagation();
+
+    navigator.clipboard.writeText(texto);
+
+    alert('📋 Mensaje copiado');
+}
+
+function borrarMensaje(event,fecha){
+
+    event.stopPropagation();
+
+    let mensajes =
+        JSON.parse(localStorage.getItem('mensajes_' + usuario)) || [];
+
+    mensajes = mensajes.filter(m=>m.fecha !== fecha);
+
+    localStorage.setItem(
+        'mensajes_' + usuario,
+        JSON.stringify(mensajes)
+    );
+
+    cargarMensajes();
+}
+
+function cerrarImagen(){
+
+    document.getElementById("imageModal")
+    .style.display = "none";
+}
 </script>
 
 </body>
