@@ -130,62 +130,105 @@ textarea{
     box-shadow:0 0 20px #c77dff;
 }
 
-/* NOTAS */
+/* ICONOS NOTAS */
 #listaNotas{
     width:90%;
-    max-width:800px;
-    margin-top:25px;
-    overflow-y:auto;
-    max-height:60vh;
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    justify-content:center;
+    margin-top:30px;
 }
 
-.note{
-    position:relative;
+.note-icon{
+    width:130px;
+    height:130px;
     background:#111;
-    border-radius:20px;
-    padding:20px;
-    margin-bottom:20px;
+    border-radius:25px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
     box-shadow:0 0 15px #c77dff;
     transition:.3s;
+    position:relative;
 }
 
-.note:hover{
-    transform:scale(1.01);
+.note-icon:hover{
+    transform:scale(1.05);
     box-shadow:0 0 25px #c77dff;
 }
 
-.note h3{
-    margin-top:0;
-    color:#c77dff;
-    text-shadow:0 0 10px #c77dff;
+.note-icon span{
+    font-size:50px;
 }
 
-/* BOTÓN BORRAR */
+.note-icon p{
+    margin-top:10px;
+    text-align:center;
+    padding:0 10px;
+    color:#c77dff;
+}
+
+/* BORRAR */
 .delete-btn{
     position:absolute;
-    top:10px;
-    right:10px;
-    width:28px;
-    height:28px;
-    background:#000;
+    top:8px;
+    right:8px;
+    width:25px;
+    height:25px;
     border:none;
-    color:#ff003c;
-    font-size:16px;
-    font-weight:bold;
     border-radius:50%;
+    background:#000;
+    color:#ff003c;
     cursor:pointer;
     box-shadow:0 0 10px #ff003c;
-    transition:.3s;
-    display:flex;
-    justify-content:center;
-    align-items:center;
 }
 
 .delete-btn:hover{
     background:#ff003c;
     color:black;
-    box-shadow:0 0 20px #ff003c;
-    transform:scale(1.1);
+}
+
+/* MODAL */
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.85);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:100;
+}
+
+.modal-content{
+    width:80%;
+    max-width:700px;
+    background:#111;
+    padding:25px;
+    border-radius:25px;
+    box-shadow:0 0 25px #c77dff;
+    position:relative;
+}
+
+.modal-content h2{
+    color:#c77dff;
+    text-shadow:0 0 10px #c77dff;
+}
+
+.close-modal{
+    position:absolute;
+    top:15px;
+    right:15px;
+    background:#000;
+    border:none;
+    color:#ff003c;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    cursor:pointer;
+    box-shadow:0 0 10px #ff003c;
 }
 </style>
 </head>
@@ -237,6 +280,24 @@ textarea{
     </button>
 
     <div id="listaNotas"></div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+
+    <div class="modal-content">
+
+        <button class="close-modal"
+        onclick="cerrarNota()">
+            ✕
+        </button>
+
+        <h2 id="modalTitulo"></h2>
+
+        <div id="modalTexto"></div>
+
+    </div>
 
 </div>
 
@@ -307,20 +368,17 @@ function cargarNotas(){
     notas.forEach((n,i)=>{
 
         cont.innerHTML += `
-        <div class="note">
+        <div class="note-icon"
+        onclick="abrirNota(${i})">
 
-            <h3>
-                📁 ${n.titulo}
-            </h3>
-
-            <div>
-                ${n.texto}
-            </div>
-
-            <button onclick="borrarNota(${i})"
-            class="delete-btn">
+            <button class="delete-btn"
+            onclick="event.stopPropagation(); borrarNota(${i})">
                 ✕
             </button>
+
+            <span>📁</span>
+
+            <p>${n.titulo}</p>
 
         </div>
         `;
@@ -356,6 +414,29 @@ function agregarNota(){
     document.getElementById("notaInput").value="";
 
     cargarNotas();
+}
+
+/* ABRIR */
+function abrirNota(i){
+
+    const notas =
+    JSON.parse(localStorage.getItem(notasKey)) || [];
+
+    document.getElementById("modalTitulo")
+    .textContent = notas[i].titulo;
+
+    document.getElementById("modalTexto")
+    .textContent = notas[i].texto;
+
+    document.getElementById("modal")
+    .style.display = "flex";
+}
+
+/* CERRAR */
+function cerrarNota(){
+
+    document.getElementById("modal")
+    .style.display = "none";
 }
 
 /* BORRAR */
