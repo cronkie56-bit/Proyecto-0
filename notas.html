@@ -3,235 +3,378 @@
 <head>
 <meta charset="UTF-8">
 <title>Notas</title>
+
 <style>
-body {
-    margin: 0;
-    background: #0b0b0b;
-    color: white;
-    font-family: Arial;
-    overflow: hidden;
+body{
+    margin:0;
+    background:#0b0b0b;
+    color:white;
+    font-family:Arial;
+    overflow:hidden;
 }
 
-/* ☰ ICONO */
-.menu-icon {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 28px;
-    cursor: pointer;
-    color: #c77dff;
-    text-shadow: 0 0 10px #c77dff;
-    z-index: 50;
-    transition: 0.3s;
+/* ☰ */
+.menu-icon{
+    position:fixed;
+    top:20px;
+    left:20px;
+    font-size:28px;
+    cursor:pointer;
+    color:#c77dff;
+    text-shadow:0 0 10px #c77dff;
+    z-index:50;
 }
 
-.menu-icon:hover { 
-    transform: scale(1.1); 
-    text-shadow: 0 0 20px #c77dff; 
+/* PANEL */
+.side-panel{
+    position:fixed;
+    top:0;
+    left:0;
+    width:260px;
+    height:100%;
+    background:#111;
+    box-shadow:0 0 25px #c77dff;
+    border-radius:0 0 15px 0;
+    padding:20px;
+    z-index:40;
+
+    transform:translateX(-100%);
+    opacity:0;
+    pointer-events:none;
+
+    transition:transform .4s ease, opacity .3s ease;
 }
 
-/* PANEL ANIMADO */
-.side-panel {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 260px;
-    height: 100%;
-    background: #111;
-    box-shadow: 0 0 25px #c77dff;
-    border-radius: 0 15px 15px 0;
-    padding: 20px;
-    z-index: 40;
-
-    transform: translateX(-100%);
-    opacity: 0;
-    pointer-events: none;
-
-    transition: transform 0.4s ease, opacity 0.3s ease;
+.side-panel.active{
+    transform:translateX(0);
+    opacity:1;
+    pointer-events:auto;
 }
 
-.side-panel.active { 
-    transform: translateX(0);
-    opacity: 1;
-    pointer-events: auto;
+/* BOTONES PANEL */
+.panel-btn{
+    display:block;
+    width:100%;
+    margin:15px 0;
+    padding:12px;
+    background:#000;
+    border:none;
+    color:white;
+    cursor:pointer;
+    border-radius:20px;
+    box-shadow:0 0 10px #c77dff;
+    transition:.3s;
 }
 
-/* BOTONES PANEL (MEJORADOS) */
-.panel-btn {
-    display: block;
-    width: 100%;
-    margin: 15px 0;
-    padding: 12px;
-    background: #000; /* negro */
-    border: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 20px; /* MÁS REDONDEADO */
-    box-shadow: 0 0 10px #c77dff;
-    transition: 0.3s;
+.panel-btn:hover{
+    background:#1a1a1a;
+    box-shadow:0 0 20px #c77dff;
 }
 
-.panel-btn:hover { 
-    background: #1a1a1a; 
-    box-shadow: 0 0 20px #c77dff; 
+/* LOGOUT */
+#logout{
+    position:fixed;
+    top:20px;
+    right:20px;
+    padding:8px 15px;
+    background:#111;
+    border:1px solid #555;
+    color:white;
+    cursor:pointer;
+    border-radius:0;
+    box-shadow:0 0 10px red;
 }
 
-/* CERRAR SESIÓN (RESPETADO) */
-#logout {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 8px 15px;
-    background: #111;
-    border: 1px solid #555;
-    color: white;
-    cursor: pointer;
-    border-radius: 0; /* cuadrado */
-    z-index: 60;
-    box-shadow: 0 0 10px red;
+#logout:hover{
+    background:red;
+    box-shadow:0 0 20px red;
 }
 
-#logout:hover { 
-    background: red; 
-    box-shadow: 0 0 20px red; 
+/* CONTENIDO */
+.container{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin-top:90px;
+    padding:20px;
 }
 
-/* INTERFAZ */
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 80px;
+/* TEXTAREA */
+textarea{
+    width:90%;
+    max-width:700px;
+    height:120px;
+    background:#000;
+    border:none;
+    border-radius:20px;
+    color:white;
+    padding:15px;
+    resize:none;
+    box-shadow:0 0 15px #c77dff;
+    margin-bottom:15px;
 }
 
-textarea {
-    width: 90%;
-    height: 100px;
-    background: #111;
-    border-radius: 12px;
-    border: 1px solid #444;
-    color: white;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 0 10px #8000ff;
+/* BOTÓN */
+.add-btn{
+    background:#000;
+    border:none;
+    color:white;
+    padding:12px 25px;
+    border-radius:20px;
+    cursor:pointer;
+    box-shadow:0 0 10px #c77dff;
+    transition:.3s;
 }
 
-.container button {
-    width: 90%;
-    background: #000;
-    border-radius: 20px;
-    border: none;
-    color: white;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 0 10px #c77dff;
+.add-btn:hover{
+    box-shadow:0 0 20px #c77dff;
 }
 
-#listaNotas .note {
-    background: #111;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 8px 0;
-    border: 1px solid #444;
-    box-shadow: 0 0 8px #c77dff;
-    position: relative;
+/* NOTAS */
+#listaNotas{
+    width:90%;
+    max-width:800px;
+    margin-top:25px;
+    overflow-y:auto;
+    max-height:60vh;
 }
 
-#listaNotas .note button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #222;
-    border: none;
-    color: #ff003c;
-    padding: 2px 6px;
-    cursor: pointer;
-    border-radius: 5px;
+.note{
+    position:relative;
+    background:#111;
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 0 15px #c77dff;
+    transition:.3s;
 }
 
-#listaNotas .note button:hover { 
-    background: #ff003c; 
-    color: black; 
+.note:hover{
+    transform:scale(1.01);
+    box-shadow:0 0 25px #c77dff;
+}
+
+.note h3{
+    margin-top:0;
+    color:#c77dff;
+    text-shadow:0 0 10px #c77dff;
+}
+
+/* BOTÓN BORRAR */
+.delete-btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:28px;
+    height:28px;
+    background:#000;
+    border:none;
+    color:#ff003c;
+    font-size:16px;
+    font-weight:bold;
+    border-radius:50%;
+    cursor:pointer;
+    box-shadow:0 0 10px #ff003c;
+    transition:.3s;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.delete-btn:hover{
+    background:#ff003c;
+    color:black;
+    box-shadow:0 0 20px #ff003c;
+    transform:scale(1.1);
 }
 </style>
 </head>
+
 <body>
 
-<!-- ICONO PANEL -->
+<!-- ☰ -->
 <div class="menu-icon" id="menuIcon">☰</div>
 
 <!-- PANEL -->
 <div class="side-panel" id="panel">
-    <button class="panel-btn" onclick="window.location.href='notas.html'">📝 Notas</button>
-    <button class="panel-btn" onclick="window.location.href='mensajes.html'">💬 Mensajes</button>
+
+    <button class="panel-btn"
+    onclick="window.location.href='bienvenido.html'">
+        🏠 Inicio
+    </button>
+
+    <button class="panel-btn"
+    onclick="window.location.href='notas.html'">
+        📝 Notas
+    </button>
+
+    <button class="panel-btn"
+    onclick="window.location.href='mensajes.html'">
+        💬 Mensajes
+    </button>
+
 </div>
 
-<!-- CERRAR SESIÓN -->
-<button id="logout" onclick="logout()">Cerrar sesión</button>
+<!-- LOGOUT -->
+<button id="logout">Cerrar sesión</button>
 
+<!-- CONTENIDO -->
 <div class="container">
-    <h2>Notas de <span id="usuario"></span></h2>
-    <textarea id="notaInput" placeholder="Escribe una nota..."></textarea>
-    <button onclick="agregarNota()">Agregar Nota</button>
+
+    <h1 style="
+        color:#c77dff;
+        text-shadow:0 0 15px #c77dff;
+    ">
+        📝 Notas de <span id="usuario"></span>
+    </h1>
+
+    <textarea id="notaInput"
+    placeholder="Escribe una nota..."></textarea>
+
+    <button class="add-btn"
+    onclick="agregarNota()">
+        Guardar Nota
+    </button>
+
     <div id="listaNotas"></div>
+
 </div>
 
 <script>
-const usuario = localStorage.getItem("usuario");
-if(!usuario){ window.location.href="index.html"; }
-document.getElementById("usuario").textContent = usuario;
+// SESIÓN
+const usuario =
+localStorage.getItem("usuario");
 
-// PANEL (NUEVO)
-const panel = document.getElementById("panel");
-const menuIcon = document.getElementById("menuIcon");
+if(!usuario){
 
-menuIcon.onclick = () => {
+    window.location.href="index.html";
+}
+
+document.getElementById("usuario")
+.textContent = usuario;
+
+/* PANEL */
+const panel =
+document.getElementById("panel");
+
+const menuIcon =
+document.getElementById("menuIcon");
+
+menuIcon.onclick = ()=>{
+
     panel.classList.add("active");
+
     menuIcon.style.display = "none";
 };
 
-document.addEventListener("click", (e)=>{
-    if(panel.classList.contains("active") && !panel.contains(e.target) && e.target !== menuIcon){
+document.addEventListener("click",(e)=>{
+
+    if(
+        panel.classList.contains("active") &&
+        !panel.contains(e.target) &&
+        e.target !== menuIcon
+    ){
+
         panel.classList.remove("active");
+
         menuIcon.style.display = "block";
     }
 });
 
-// CERRAR SESIÓN
-function logout(){
-    localStorage.removeItem("usuario");
-    window.location.href="index.html";
-}
+/* LOGOUT */
+document.getElementById("logout")
+.onclick = ()=>{
 
-// NOTAS
+    localStorage.removeItem("usuario");
+
+    window.location.href="index.html";
+};
+
+/* NOTAS */
 const notasKey = "notas_" + usuario;
 
+/* CARGAR */
 function cargarNotas(){
-    const notas = JSON.parse(localStorage.getItem(notasKey)) || [];
-    const cont = document.getElementById("listaNotas");
+
+    const notas =
+    JSON.parse(localStorage.getItem(notasKey)) || [];
+
+    const cont =
+    document.getElementById("listaNotas");
+
     cont.innerHTML = "";
+
     notas.forEach((n,i)=>{
-        cont.innerHTML += `<div class="note">${n}<button onclick="borrarNota(${i})">X</button></div>`;
+
+        cont.innerHTML += `
+        <div class="note">
+
+            <h3>
+                📁 ${n.titulo}
+            </h3>
+
+            <div>
+                ${n.texto}
+            </div>
+
+            <button onclick="borrarNota(${i})"
+            class="delete-btn">
+                ✕
+            </button>
+
+        </div>
+        `;
     });
 }
 
+/* AGREGAR */
 function agregarNota(){
-    const input = document.getElementById("notaInput");
-    const notas = JSON.parse(localStorage.getItem(notasKey)) || [];
-    if(!input.value) return;
-    notas.push(input.value);
-    localStorage.setItem(notasKey, JSON.stringify(notas));
-    input.value="";
+
+    const titulo =
+    prompt("Nombre de la nota:");
+
+    if(!titulo) return;
+
+    const texto =
+    document.getElementById("notaInput").value;
+
+    if(!texto) return;
+
+    const notas =
+    JSON.parse(localStorage.getItem(notasKey)) || [];
+
+    notas.push({
+        titulo:titulo,
+        texto:texto
+    });
+
+    localStorage.setItem(
+        notasKey,
+        JSON.stringify(notas)
+    );
+
+    document.getElementById("notaInput").value="";
+
     cargarNotas();
 }
 
+/* BORRAR */
 function borrarNota(i){
-    const notas = JSON.parse(localStorage.getItem(notasKey)) || [];
+
+    const notas =
+    JSON.parse(localStorage.getItem(notasKey)) || [];
+
     notas.splice(i,1);
-    localStorage.setItem(notasKey, JSON.stringify(notas));
+
+    localStorage.setItem(
+        notasKey,
+        JSON.stringify(notas)
+    );
+
     cargarNotas();
 }
 
+/* INICIO */
 cargarNotas();
 </script>
 
